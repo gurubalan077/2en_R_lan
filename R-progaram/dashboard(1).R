@@ -1,0 +1,38 @@
+library(shinydashboard)
+library(shiny)
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Basic Dashboard"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+      menuItem("widgets", tabName = "widgets", icon = icon("th"))
+    )
+  ),
+  dashboardBody(
+    tabItem(
+      tabName = "dashboard",
+      fluidRow(
+        box(plotOutput("plot1", height = 400)),
+        box(title = "controls",
+            sliderInput("slider", "Number of Observations", 1, 1000, 500)
+        )
+      )
+    ),
+    tabItem(
+      tabName = "widgets",
+      h2("Widgets tab page under construction")
+    )
+  )
+)
+
+server <- function(input, output) {
+  set.seed(112)  # Corrected from set.send(112)
+  histdata <- rnorm(1000)
+  output$plot1 <- renderPlot({
+    data <- histdata[seq_len(input$slider)]
+    hist(data)
+  })
+}
+
+shinyApp(ui, server)
